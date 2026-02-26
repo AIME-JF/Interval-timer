@@ -1,0 +1,646 @@
+/* ============================================
+   间隔时钟 - 护眼深色主题
+   ============================================ */
+
+:root {
+  /* 护眼色板 */
+  --bg-primary: #1a1a2e;
+  --bg-secondary: #16213e;
+  --bg-card: rgba(30, 30, 56, 0.85);
+  --bg-hover: rgba(127, 219, 202, 0.08);
+
+  --text-primary: #c8d6e5;
+  --text-secondary: #8395a7;
+  --text-timer: #7fdbca;
+  --text-medicine: #e0c097;
+  --text-alert: #f8a5c2;
+
+  --accent: #7fdbca;
+  --accent-dim: rgba(127, 219, 202, 0.3);
+  --accent-glow: rgba(127, 219, 202, 0.15);
+  --btn-primary-bg: rgba(127, 219, 202, 0.18);
+  --btn-primary-border: rgba(127, 219, 202, 0.4);
+  --btn-secondary-bg: rgba(255, 255, 255, 0.05);
+  --btn-secondary-border: rgba(255, 255, 255, 0.1);
+
+  --danger: #e55039;
+  --success: #78e08f;
+
+  --radius: 12px;
+  --radius-sm: 6px;
+  --transition: 0.25s ease;
+}
+
+/* 全局重置 */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: 'Microsoft YaHei', 'PingFang SC', -apple-system, sans-serif;
+  background: transparent;
+  color: var(--text-primary);
+  overflow: hidden;
+  user-select: none;
+  -webkit-font-smoothing: antialiased;
+}
+
+.hidden {
+  display: none !important;
+}
+
+/* ============================================
+   标题栏
+   ============================================ */
+.titlebar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  height: 28px;
+  padding: 0 6px;
+  background: rgba(22, 33, 62, 0.6);
+  border-bottom: 1px solid rgba(127, 219, 202, 0.08);
+}
+
+.titlebar-drag {
+  flex: 1;
+  -webkit-app-region: drag;
+  height: 100%;
+  display: flex;
+  align-items: center;
+}
+
+.titlebar-title {
+  font-size: 11px;
+  color: var(--text-secondary);
+  letter-spacing: 0.5px;
+}
+
+.titlebar-buttons {
+  display: flex;
+  gap: 2px;
+  -webkit-app-region: no-drag;
+}
+
+.titlebar-btn {
+  width: 24px;
+  height: 20px;
+  border: none;
+  background: transparent;
+  color: var(--text-secondary);
+  font-size: 11px;
+  cursor: pointer;
+  border-radius: 3px;
+  transition: all var(--transition);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.titlebar-btn:hover {
+  background: var(--bg-hover);
+  color: var(--text-primary);
+}
+
+.btn-close:hover {
+  background: rgba(229, 80, 57, 0.25);
+  color: var(--danger);
+}
+
+.btn-settings {
+  font-size: 12px;
+}
+
+.btn-pin {
+  font-size: 10px;
+  opacity: 0.4;
+  transition: all var(--transition);
+}
+
+.btn-pin.active {
+  opacity: 1;
+  color: var(--accent);
+}
+
+.btn-pin:hover {
+  opacity: 0.8;
+}
+
+/* ============================================
+   主视图容器
+   ============================================ */
+.main-view {
+  background: var(--bg-card);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border-radius: 0 0 var(--radius) var(--radius);
+  padding: 8px 12px;
+  min-height: calc(100vh - 28px);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+/* ============================================
+   空闲状态
+   ============================================ */
+.state-idle {
+  text-align: center;
+  width: 100%;
+}
+
+.today-progress {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  margin-bottom: 6px;
+}
+
+.progress-label {
+  font-size: 12px;
+  color: var(--text-secondary);
+}
+
+.progress-count {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--accent);
+}
+
+.shortcut-hint {
+  font-size: 10px;
+  color: var(--text-secondary);
+  margin-top: 4px;
+  opacity: 0.6;
+}
+
+/* ============================================
+   等待滴药状态
+   ============================================ */
+.state-waiting {
+  text-align: center;
+  width: 100%;
+}
+
+.medicine-info {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1px;
+  margin-bottom: 4px;
+}
+
+.medicine-index {
+  font-size: 11px;
+  color: var(--text-secondary);
+}
+
+.medicine-name {
+  font-size: 17px;
+  font-weight: 700;
+  color: var(--text-medicine);
+  text-shadow: 0 0 20px rgba(224, 192, 151, 0.15);
+}
+
+.waiting-prompt {
+  font-size: 12px;
+  color: var(--text-secondary);
+  margin-bottom: 8px;
+}
+
+/* ============================================
+   倒计时状态
+   ============================================ */
+.state-counting {
+  text-align: center;
+  width: 100%;
+}
+
+.timer-display {
+  position: relative;
+  width: 130px;
+  height: 130px;
+  margin: 2px auto;
+}
+
+.timer-ring {
+  width: 100%;
+  height: 100%;
+  transform: rotate(-90deg);
+}
+
+.timer-ring-bg {
+  fill: none;
+  stroke: rgba(127, 219, 202, 0.08);
+  stroke-width: 5;
+}
+
+.timer-ring-progress {
+  fill: none;
+  stroke: var(--accent);
+  stroke-width: 5;
+  stroke-linecap: round;
+  stroke-dasharray: 326.73;
+  stroke-dashoffset: 0;
+  transition: stroke-dashoffset 1s linear;
+  filter: drop-shadow(0 0 6px var(--accent-dim));
+}
+
+.timer-text {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  font-size: 28px;
+  font-weight: 700;
+  color: var(--text-timer);
+  font-variant-numeric: tabular-nums;
+  letter-spacing: 2px;
+  text-shadow: 0 0 20px var(--accent-glow);
+}
+
+.next-medicine-hint {
+  font-size: 11px;
+  color: var(--text-secondary);
+  margin-top: 2px;
+}
+
+#next-medicine-name {
+  color: var(--text-medicine);
+  font-weight: 500;
+}
+
+/* ============================================
+   提醒状态
+   ============================================ */
+.state-alert {
+  text-align: center;
+  width: 100%;
+  position: relative;
+}
+
+.alert-pulse {
+  position: absolute;
+  top: -10px;
+  left: -10px;
+  right: -10px;
+  bottom: -10px;
+  border-radius: var(--radius);
+  border: 2px solid var(--accent);
+  animation: pulse-border 1.5s ease-in-out infinite;
+  pointer-events: none;
+}
+
+@keyframes pulse-border {
+
+  0%,
+  100% {
+    opacity: 0.2;
+    border-color: var(--accent);
+    box-shadow: 0 0 0 0 var(--accent-dim);
+  }
+
+  50% {
+    opacity: 0.8;
+    border-color: var(--text-alert);
+    box-shadow: 0 0 20px var(--accent-dim);
+  }
+}
+
+.alert-text {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--text-alert);
+  margin-bottom: 8px;
+  animation: gentle-blink 2s ease-in-out infinite;
+}
+
+@keyframes gentle-blink {
+
+  0%,
+  100% {
+    opacity: 1;
+  }
+
+  50% {
+    opacity: 0.5;
+  }
+}
+
+/* ============================================
+   完成状态
+   ============================================ */
+.state-complete {
+  text-align: center;
+  width: 100%;
+}
+
+.complete-icon {
+  font-size: 28px;
+  margin-bottom: 2px;
+}
+
+.complete-text {
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--success);
+  margin-bottom: 6px;
+}
+
+/* ============================================
+   按钮
+   ============================================ */
+.btn-primary {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  padding: 7px 18px;
+  border: 1px solid var(--btn-primary-border);
+  background: var(--btn-primary-bg);
+  color: var(--accent);
+  font-size: 13px;
+  font-weight: 600;
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  transition: all var(--transition);
+  font-family: inherit;
+}
+
+.btn-primary:hover {
+  background: rgba(127, 219, 202, 0.28);
+  box-shadow: 0 0 16px var(--accent-glow);
+  transform: translateY(-1px);
+}
+
+.btn-primary:active {
+  transform: translateY(0);
+}
+
+.btn-icon {
+  font-size: 12px;
+}
+
+.btn-secondary {
+  padding: 5px 12px;
+  border: 1px solid var(--btn-secondary-border);
+  background: var(--btn-secondary-bg);
+  color: var(--text-secondary);
+  font-size: 12px;
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  transition: all var(--transition);
+  font-family: inherit;
+}
+
+.btn-secondary:hover {
+  background: rgba(255, 255, 255, 0.1);
+  color: var(--text-primary);
+}
+
+/* ============================================
+   设置面板
+   ============================================ */
+.settings-panel {
+  position: absolute;
+  top: 28px;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: var(--bg-card);
+  backdrop-filter: blur(20px);
+  padding: 10px 14px;
+  z-index: 10;
+  overflow-y: auto;
+  border-radius: 0 0 var(--radius) var(--radius);
+}
+
+.settings-header {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text-primary);
+  margin-bottom: 10px;
+  padding-bottom: 6px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+.setting-group {
+  margin-bottom: 10px;
+}
+
+.setting-label {
+  display: block;
+  font-size: 11px;
+  color: var(--text-secondary);
+  margin-bottom: 4px;
+}
+
+.setting-input-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.setting-slider {
+  flex: 1;
+  -webkit-appearance: none;
+  appearance: none;
+  height: 4px;
+  background: rgba(127, 219, 202, 0.15);
+  border-radius: 2px;
+  outline: none;
+}
+
+.setting-slider::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  background: var(--accent);
+  cursor: pointer;
+  box-shadow: 0 0 8px var(--accent-dim);
+}
+
+.setting-value {
+  font-size: 13px;
+  color: var(--accent);
+  font-weight: 600;
+  min-width: 50px;
+  text-align: right;
+}
+
+.medicine-list {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.medicine-input {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.medicine-input-label {
+  font-size: 12px;
+  color: var(--text-secondary);
+  min-width: 16px;
+}
+
+.medicine-input input {
+  flex: 1;
+  padding: 4px 8px;
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: var(--radius-sm);
+  color: var(--text-medicine);
+  font-size: 12px;
+  font-family: inherit;
+  outline: none;
+  transition: border-color var(--transition);
+}
+
+.medicine-input input:focus {
+  border-color: var(--accent-dim);
+}
+
+/* 药水管理操作按钮 */
+.medicine-actions {
+  display: flex;
+  gap: 2px;
+  flex-shrink: 0;
+}
+
+.medicine-action-btn {
+  width: 22px;
+  height: 22px;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  background: rgba(255, 255, 255, 0.03);
+  color: var(--text-secondary);
+  font-size: 11px;
+  cursor: pointer;
+  border-radius: 4px;
+  transition: all var(--transition);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+  font-family: inherit;
+  line-height: 1;
+}
+
+.medicine-action-btn:hover {
+  background: rgba(255, 255, 255, 0.1);
+  color: var(--text-primary);
+  border-color: rgba(255, 255, 255, 0.15);
+}
+
+.medicine-action-btn.btn-delete:hover {
+  background: rgba(229, 80, 57, 0.2);
+  color: var(--danger);
+  border-color: rgba(229, 80, 57, 0.3);
+}
+
+.medicine-action-btn:disabled {
+  opacity: 0.2;
+  cursor: not-allowed;
+  pointer-events: none;
+}
+
+.btn-add-medicine {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  width: 100%;
+  padding: 5px 0;
+  margin-top: 4px;
+  border: 1px dashed rgba(127, 219, 202, 0.25);
+  background: transparent;
+  color: var(--accent);
+  font-size: 11px;
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  transition: all var(--transition);
+  font-family: inherit;
+  opacity: 0.7;
+}
+
+.btn-add-medicine:hover {
+  background: rgba(127, 219, 202, 0.08);
+  border-color: rgba(127, 219, 202, 0.4);
+  opacity: 1;
+}
+
+/* 设置面板标题栏 */
+.settings-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.settings-back-btn {
+  padding: 2px 8px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  background: rgba(255, 255, 255, 0.05);
+  color: var(--text-secondary);
+  font-size: 11px;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: all var(--transition);
+  font-family: inherit;
+}
+
+.settings-back-btn:hover {
+  background: rgba(255, 255, 255, 0.1);
+  color: var(--text-primary);
+}
+
+.settings-actions {
+  display: flex;
+  gap: 6px;
+  margin-top: 10px;
+}
+
+/* checkbox 样式 */
+input[type="checkbox"] {
+  accent-color: var(--accent);
+  margin-right: 6px;
+}
+
+/* ============================================
+   滚动条
+   ============================================ */
+::-webkit-scrollbar {
+  width: 4px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: rgba(127, 219, 202, 0.2);
+  border-radius: 2px;
+}
+
+/* ============================================
+   窗口整体样式
+   ============================================ */
+html,
+body {
+  height: 100%;
+  border-radius: var(--radius);
+}
+
+body {
+  border: 1px solid rgba(127, 219, 202, 0.1);
+  border-radius: var(--radius);
+  background: var(--bg-primary);
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
+}

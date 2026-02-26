@@ -1,0 +1,28 @@
+{
+  "name": "interval-clock",
+  "version": "1.0.0",
+  "description": "术后滴眼药间隔计时器 - 桌面悬浮时钟",
+  "main": "main.js",
+  "scripts": {
+    "start": "electron .",
+    "build": "electron-builder"
+  },
+  "author": "",
+  "license": "MIT",
+  "devDependencies": {
+    "electron": "^40.6.1",
+    "electron-builder": "^25.0.0"
+  },
+  "build": {
+    "appId": "com.interval-clock.app",
+    "productName": "间隔时钟",
+    "win": {
+      "target": "nsis",
+      "icon": "build/icon.png"
+    },
+    "nsis": {
+      "oneClick": true,
+      "allowToChangeInstallationDirectory": false
+    }
+  }
+}

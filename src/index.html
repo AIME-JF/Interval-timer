@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>间隔时钟</title>
+  <link rel="stylesheet" href="styles/main.css">
+</head>
+
+<body>
+  <!-- 自定义标题栏 -->
+  <div class="titlebar" id="titlebar">
+    <div class="titlebar-drag">
+      <span class="titlebar-title">💧 间隔时钟</span>
+    </div>
+    <div class="titlebar-buttons">
+      <button class="titlebar-btn btn-settings" id="btn-toggle-settings" title="设置">⚙</button>
+      <button class="titlebar-btn btn-pin active" id="btn-pin" title="置顶">📌</button>
+      <button class="titlebar-btn btn-minimize" id="btn-minimize" title="最小化">─</button>
+      <button class="titlebar-btn btn-close" id="btn-close" title="关闭">×</button>
+    </div>
+  </div>
+
+  <!-- 主视图 -->
+  <div class="main-view" id="main-view">
+    <!-- 空闲状态 -->
+    <div class="state-idle" id="state-idle">
+      <div class="today-progress">
+        <span class="progress-label">今日用药</span>
+        <span class="progress-count" id="progress-count">0 / 4 次</span>
+      </div>
+      <button class="btn-primary btn-start" id="btn-start">
+        <span class="btn-icon">▶</span>
+        <span>开始用药</span>
+      </button>
+      <div class="shortcut-hint">快捷键: Ctrl+Space</div>
+    </div>
+
+    <!-- 等待滴药状态 -->
+    <div class="state-waiting hidden" id="state-waiting">
+      <div class="medicine-info">
+        <span class="medicine-index" id="medicine-index">第 1 种</span>
+        <span class="medicine-name" id="medicine-name">玻璃酸钠滴眼液</span>
+      </div>
+      <div class="waiting-prompt">请滴下这种眼药水</div>
+      <button class="btn-primary btn-confirm" id="btn-confirm">
+        <span class="btn-icon">✓</span>
+        <span>已滴药，开始计时</span>
+      </button>
+      <div class="shortcut-hint">按 空格 / Ctrl+Space 快速确认</div>
+    </div>
+
+    <!-- 倒计时状态 -->
+    <div class="state-counting hidden" id="state-counting">
+      <div class="medicine-info">
+        <span class="medicine-index" id="counting-index">第 1 种 已完成</span>
+      </div>
+      <div class="timer-display">
+        <svg class="timer-ring" viewBox="0 0 120 120">
+          <circle class="timer-ring-bg" cx="60" cy="60" r="52" />
+          <circle class="timer-ring-progress" id="timer-ring-progress" cx="60" cy="60" r="52" />
+        </svg>
+        <div class="timer-text" id="timer-text">05:00</div>
+      </div>
+      <div class="next-medicine-hint">
+        <span>下一种: </span>
+        <span id="next-medicine-name">氯替泼诺混悬滴眼液</span>
+      </div>
+      <button class="btn-secondary btn-pause" id="btn-pause">暂停</button>
+    </div>
+
+    <!-- 提醒状态 -->
+    <div class="state-alert hidden" id="state-alert">
+      <div class="alert-pulse"></div>
+      <div class="medicine-info">
+        <span class="medicine-index" id="alert-index">第 2 种</span>
+        <span class="medicine-name" id="alert-medicine-name">氯替泼诺混悬滴眼液</span>
+      </div>
+      <div class="alert-text">⏰ 时间到！请滴药</div>
+      <button class="btn-primary btn-confirm-next" id="btn-confirm-next">
+        <span class="btn-icon">✓</span>
+        <span>已滴药，开始计时</span>
+      </button>
+    </div>
+
+    <!-- 本轮完成状态 -->
+    <div class="state-complete hidden" id="state-complete">
+      <div class="complete-icon">✅</div>
+      <div class="complete-text">本轮用药完成！</div>
+      <div class="today-progress">
+        <span class="progress-label">今日进度</span>
+        <span class="progress-count" id="complete-progress">1 / 4 次</span>
+      </div>
+      <button class="btn-primary btn-back" id="btn-back">返回</button>
+    </div>
+  </div>
+
+  <!-- 设置面板 -->
+  <div class="settings-panel hidden" id="settings-panel">
+    <div class="settings-header">
+      <span>⚙ 设置</span>
+      <button class="settings-back-btn" id="btn-settings-back">✕ 关闭</button>
+    </div>
+    <div class="settings-body">
+      <div class="setting-group">
+        <label class="setting-label">间隔时间（分钟）</label>
+        <div class="setting-input-row">
+          <input type="range" id="interval-slider" min="1" max="15" value="5" class="setting-slider">
+          <span class="setting-value" id="interval-value">5 分钟</span>
+        </div>
+      </div>
+      <div class="setting-group">
+        <label class="setting-label">眼药水名称</label>
+        <div class="medicine-list" id="medicine-list">
+          <!-- 动态生成 -->
+        </div>
+      </div>
+      <div class="setting-group">
+        <label class="setting-label">
+          <input type="checkbox" id="sound-toggle" checked> 提示音
+        </label>
+      </div>
+      <div class="settings-actions">
+        <button class="btn-secondary btn-save-settings" id="btn-save-settings">保存</button>
+        <button class="btn-secondary btn-reset-today" id="btn-reset-today">重置今日记录</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="js/timer.js"></script>
+  <script src="js/config.js"></script>
+  <script src="js/app.js"></script>
+</body>
+
+</html>
