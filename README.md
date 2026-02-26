@@ -41,8 +41,8 @@
 
 ```bash
 # 克隆项目
-git clone https://github.com/YOUR_USERNAME/间隔时钟.git
-cd 间隔时钟
+git clone https://github.com/AIME-JF/Interval-timer.git
+cd Interval-timer
 
 # 安装依赖
 npm install
@@ -143,8 +143,8 @@ npm run build
 
 ```bash
 # Clone the project
-git clone https://github.com/YOUR_USERNAME/间隔时钟.git
-cd 间隔时钟
+git clone https://github.com/AIME-JF/Interval-timer.git
+cd Interval-timer
 
 # Install dependencies
 npm install
